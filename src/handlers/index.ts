@@ -1,16 +1,9 @@
 import { Request, Response } from "express";
 import slug from "slug";
 import Usuario from "../models/Usuario";
-import { hashPassword } from "../utils/auth";
-import { validationResult } from "express-validator";
+import { hashPassword, verificarPasswords } from "../utils/auth";
 
 export const crearUsuario = async (req: Request, res: Response) => {
-  // Manejar errores
-  let errores = validationResult(req);
-  if (!errores.isEmpty()) {
-    return res.status(400).json({ errores: errores.array() });
-  }
-
   const { nombreUsuario, correo, password } = req.body;
 
   const existeUsuario = await Usuario.findOne({
@@ -38,4 +31,26 @@ export const crearUsuario = async (req: Request, res: Response) => {
   usuario.nombreUsuario = handle;
   await usuario.save();
   res.status(201).send("Usuario creado");
+};
+
+export const iniciarSesion = async (req: Request, res: Response) => {
+  const { correo, password } = req.body;
+
+  const usuario = await Usuario.findOne({
+    correo,
+  });
+
+  if (!usuario) {
+    const error = new Error("Usuario no existe");
+    return res.status(404).json({ error: error.message });
+  }
+
+  const verificarPass = await verificarPasswords(password, usuario.password);
+
+  if (!verificarPass) {
+    const error = new Error("Contraseña incorrecta");
+    return res.status(401).json({ error: error.message });
+  }
+
+  console.log("Autenticado");
 };
