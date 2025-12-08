@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import slug from "slug";
 import Usuario from "../models/Usuario";
 import { hashPassword, verificarPasswords } from "../utils/auth";
+import { generarJWT } from "../utils/jwt";
 
 export const crearUsuario = async (req: Request, res: Response) => {
   const { nombreUsuario, correo, password } = req.body;
@@ -52,5 +53,7 @@ export const iniciarSesion = async (req: Request, res: Response) => {
     return res.status(401).json({ error: error.message });
   }
 
-  console.log("Autenticado");
+  // Generar JWT
+  const token = generarJWT({ id: usuario._id });
+  res.send(token);
 };
