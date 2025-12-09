@@ -57,3 +57,7 @@ export const iniciarSesion = async (req: Request, res: Response) => {
   const token = generarJWT({ id: usuario._id });
   res.send(token);
 };
+
+export const obtenerUsuario = async (req: Request, res: Response) => {
+  res.json(req.usuario);
+};
