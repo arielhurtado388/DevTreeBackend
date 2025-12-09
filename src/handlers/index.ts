@@ -61,3 +61,32 @@ export const iniciarSesion = async (req: Request, res: Response) => {
 export const obtenerUsuario = async (req: Request, res: Response) => {
   res.json(req.usuario);
 };
+
+export const actualizarPerfil = async (req: Request, res: Response) => {
+  try {
+    const { nombreUsuario, descripcion } = req.body;
+
+    const handle = slug(nombreUsuario, "");
+
+    const existeNombreUsuario = await Usuario.findOne({
+      nombreUsuario: handle,
+    });
+
+    if (
+      existeNombreUsuario &&
+      existeNombreUsuario.correo !== req.usuario.correo
+    ) {
+      const error = new Error("Nombre de usuario no disponible");
+      return res.status(409).json({ error: error.message });
+    }
+
+    // Actualizar el usuario
+    req.usuario.descripcion = descripcion;
+    req.usuario.nombreUsuario = handle;
+    await req.usuario.save();
+    res.send("Perfil actualizado");
+  } catch (e) {
+    const error = new Error("Hubo un error");
+    return res.status(500).json({ error: error.message });
+  }
+};

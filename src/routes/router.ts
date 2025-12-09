@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { crearUsuario, iniciarSesion, obtenerUsuario } from "../handlers";
+import {
+  actualizarPerfil,
+  crearUsuario,
+  iniciarSesion,
+  obtenerUsuario,
+} from "../handlers";
 import { body } from "express-validator";
 import { handleInputErrores } from "../middleware/validacion";
 import { autenticado } from "../middleware/auth";
@@ -30,5 +35,15 @@ router.post(
 );
 
 router.get("/usuario", autenticado, obtenerUsuario);
+router.patch(
+  "/usuario",
+  body("nombreUsuario")
+    .notEmpty()
+    .withMessage("El nombre de usuario es obligatorio"),
+  body("descripcion").notEmpty().withMessage("La descripción es obligatoria"),
+  handleInputErrores,
+  autenticado,
+  actualizarPerfil
+);
 
 export default router;
