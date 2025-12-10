@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import slug from "slug";
+import formidable from "formidable";
+import { v4 as uuidv4 } from "uuid";
 import Usuario from "../models/Usuario";
 import { hashPassword, verificarPasswords } from "../utils/auth";
 import { generarJWT } from "../utils/jwt";
+import cloudinary from "../config/cloudinary";
 
 export const crearUsuario = async (req: Request, res: Response) => {
   const { nombreUsuario, correo, password } = req.body;
@@ -85,6 +88,35 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
     req.usuario.nombreUsuario = handle;
     await req.usuario.save();
     res.send("Perfil actualizado");
+  } catch (e) {
+    const error = new Error("Hubo un error");
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const subirImagen = async (req: Request, res: Response) => {
+  const form = formidable({
+    multiples: false,
+  });
+
+  try {
+    form.parse(req, (error, fields, files) => {
+      cloudinary.uploader.upload(
+        files.file[0].filepath,
+        { public_id: uuidv4() },
+        async function (error, result) {
+          if (error) {
+            const error = new Error("Hubo un error al subir la imagen");
+            return res.status(500).json({ error: error.message });
+          }
+          if (result) {
+            req.usuario.imagen = result.secure_url;
+            await req.usuario.save();
+            res.json({ imagen: result.secure_url });
+          }
+        }
+      );
+    });
   } catch (e) {
     const error = new Error("Hubo un error");
     return res.status(500).json({ error: error.message });

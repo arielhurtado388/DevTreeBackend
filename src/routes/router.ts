@@ -4,6 +4,7 @@ import {
   crearUsuario,
   iniciarSesion,
   obtenerUsuario,
+  subirImagen,
 } from "../handlers";
 import { body } from "express-validator";
 import { handleInputErrores } from "../middleware/validacion";
@@ -45,5 +46,7 @@ router.patch(
   autenticado,
   actualizarPerfil
 );
+
+router.post("/usuario/imagen", autenticado, subirImagen);
 
 export default router;
