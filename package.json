@@ -22,7 +22,7 @@
     "formidable": "^3.5.4",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.0.0",
-    "slug": "^11.0.1",
+    "slug": "^8.2.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
