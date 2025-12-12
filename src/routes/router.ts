@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   actualizarPerfil,
+  buscarPorHandle,
   crearUsuario,
   iniciarSesion,
   obtenerUsuario,
@@ -42,7 +43,6 @@ router.patch(
   body("nombreUsuario")
     .notEmpty()
     .withMessage("El nombre de usuario es obligatorio"),
-  body("descripcion").notEmpty().withMessage("La descripción es obligatoria"),
   handleInputErrores,
   autenticado,
   actualizarPerfil
@@ -50,5 +50,13 @@ router.patch(
 
 router.post("/usuario/imagen", autenticado, subirImagen);
 router.get("/:handle", obtenerUsuarioPorHandle);
+router.post(
+  "/buscar",
+  body("nombreUsuario")
+    .notEmpty()
+    .withMessage("El nombre de usuario es obligatorio"),
+  handleInputErrores,
+  buscarPorHandle
+);
 
 export default router;
