@@ -67,7 +67,7 @@ export const obtenerUsuario = async (req: Request, res: Response) => {
 
 export const actualizarPerfil = async (req: Request, res: Response) => {
   try {
-    const { nombreUsuario, descripcion } = req.body;
+    const { nombreUsuario, descripcion, links } = req.body;
 
     const handle = slug(nombreUsuario, "");
 
@@ -86,6 +86,7 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
     // Actualizar el usuario
     req.usuario.descripcion = descripcion;
     req.usuario.nombreUsuario = handle;
+    req.usuario.links = links;
     await req.usuario.save();
     res.send("Perfil actualizado");
   } catch (e) {
