@@ -123,3 +123,21 @@ export const subirImagen = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const obtenerUsuarioPorHandle = async (req: Request, res: Response) => {
+  try {
+    const { handle } = req.params;
+    const usuario = await Usuario.findOne({
+      nombreUsuario: handle,
+    }).select("-_id -__v -correo -password");
+
+    if (!usuario) {
+      const error = new Error("No se encontró el usuario");
+      return res.status(404).json({ error: error.message });
+    }
+    res.json(usuario);
+  } catch (e) {
+    const error = new Error("Hubo un error");
+    return res.status(500).json({ error: error.message });
+  }
+};
